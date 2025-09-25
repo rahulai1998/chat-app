@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   const connectSocket = (userData) => {
     if (!userData || socket?.connected) return;
     const newSocket = io(backendUrl, {
-      auth: { userId: userData._id }, // ✅ pass userId in auth
+      query: { userId: userData._id }, // ✅ pass userId in auth
       transports: ["websocket"], // ✅ force websocket (optional)
       reconnection: true, // ✅ allow auto-reconnect
       reconnectionAttempts: 5,
