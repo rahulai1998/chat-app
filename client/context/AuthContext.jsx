@@ -77,9 +77,11 @@ export const AuthProvider = ({ children }) => {
   const connectSocket = (userData) => {
     if (!userData || socket?.connected) return;
     const newSocket = io(backendUrl, {
-      query: {
-        userId: userData._id,
-      },
+      auth: { userId: userData._id }, // ✅ pass userId in auth
+      transports: ["websocket"], // ✅ force websocket (optional)
+      reconnection: true, // ✅ allow auto-reconnect
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     newSocket.connect();
@@ -88,6 +90,15 @@ export const AuthProvider = ({ children }) => {
     newSocket.on("getOnlineUsers", (userIds) => {
       setOnlineUsers(userIds);
     });
+
+    // Cleanup old listeners if socket changes
+    return () => {
+      newSocket.off("getOnlineUsers");
+      newSocket.off("connect");
+      newSocket.off("disconnect");
+      newSocket.off("connect_error");
+      newSocket.disconnect();
+    };
   };
 
   useEffect(() => {
@@ -105,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     socket,
     login,
     logout,
-    updateProfile
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
