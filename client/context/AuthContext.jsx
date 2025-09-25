@@ -78,10 +78,10 @@ export const AuthProvider = ({ children }) => {
     if (!userData || socket?.connected) return;
     const newSocket = io(backendUrl, {
       auth: { userId: userData._id }, // ✅ use auth instead of query
-      transports: ["websocket", "polling"], // ✅ allow both (fallback if ws fails)
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      // transports: ["websocket", "polling"], // ✅ allow both (fallback if ws fails)
+      // reconnection: true,
+      // reconnectionAttempts: 5,
+      // reconnectionDelay: 1000,
     });
 
     newSocket.connect();
